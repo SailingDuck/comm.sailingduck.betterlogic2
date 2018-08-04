@@ -1,0 +1,154 @@
+<html>
+  <head>
+    <script type="text/javascript" src="/homey.js" data-origin="settings"></script>
+  </head>
+  <body>
+
+    <!-- <div class="field row"> -->
+       <h2 data-i18n="settings.title"></h2>
+        <fieldset>
+          <legend data-i18n="settings.legendimport"></legend>
+          <div class="field row">
+            <label for="variables">Variabelen</label>
+            <input id="varInput" type="text" value="" />
+          </div>
+        </fieldset>
+        <button id="save" class="right">Import variables</button>
+        <br /><br />
+      <!-- </div>
+      <div class="field row"> -->
+        <h2 data-i18n="settings.variables"></h2>
+        <fieldset id="existingVariables">
+        </fieldset>
+        <button id="addBool" class="right">Boolean toevoegen</button>
+        <button id="addNumber" class="right">Getal toevoegen</button>
+        <button id="addText" class="right">Tekst toevoegen</button>
+      <!-- </div> -->
+
+
+
+    <script type="text/javascript">
+
+      function onHomeyReady( Homey )
+      {
+
+        Homey.ready();
+        var variableStream = '';
+
+        // ======================= variabelen laden =======================
+        var variableElement = document.getElementById('varInput');
+        Homey.get('variables', function( err, variables )
+        {
+          buildVariableScreen(variables);
+
+          if( err ) return Homey.alert( err );
+          variableElement.value = variables;
+        });
+
+        // ======================= saveknop laden =======================
+        var saveElement = document.getElementById('save');
+        saveElement.addEventListener('click', function(e)
+        {
+          Homey.set('variables', variableElement.value, function( err )
+          {
+            if( err ) return Homey.alert( err );
+          });
+        });
+
+        // ======================= nieuwe variabele knoppen laden =======================
+        var addBool = document.getElementById('addBool');
+        addBool.addEventListener('click', function(e) { addBooleanSetting('addBool', 'checked'); });
+        var addNumber = document.getElementById('addNumber');
+        addNumber.addEventListener('click', function(e) { addNumberSetting('addNumber', 1); });
+        var addText = document.getElementById('addText');
+        addText.addEventListener('click', function(e) { addTextSetting('addText', 'test'); });
+
+
+
+      function buildVariableScreen(variables)
+      {
+        console.log(variables);
+        // ======================= variabelenscherm laden =======================
+        var variablesList = JSON.parse(variables);
+
+        for (let i in variablesList)
+        {
+          var v = variablesList[i];
+
+          if(v.type === 'text')
+          {
+            addTextSetting(v.name, v.value);
+          }
+          else if(v.type === 'boolean')
+          {
+            addBooleanSetting(v.name, v.value);
+          }
+          else if(v.type === 'number')
+          {
+            addNumberSetting(v.name, v.value);
+          }
+          else
+          {
+            console.log('undefined type ' + v.type);
+          }
+        }
+      }
+      }
+
+      function addBooleanSetting(name, value) {
+        console.log('addBooleanSetting ' + name + ', ' + value);
+        var existingVariablesElement = document.getElementById('existingVariables');
+        var newcontent = document.createElement('div');
+        newcontent.class = "field row";
+
+        var newHtml = "<div class=\"field row\">";
+        newHtml += "<label for\"test1\">" + name + "</label>";
+        newHtml += "<input style=\"width:auto\" id=\"test1\" type=\"checkbox\" checked=\"checked\">";
+        newHtml += "</div>";
+
+        newcontent.innerHTML = newHtml;
+
+        while (newcontent.firstChild) {
+            existingVariablesElement.appendChild(newcontent.firstChild);
+        }
+      }
+
+      function addTextSetting(name, value) {
+        console.log('addBooleanSetting ' + name + ', ' + value);
+        var existingVariablesElement = document.getElementById('existingVariables');
+        var newcontent = document.createElement('div');
+        newcontent.class = "field row";
+
+        var newHtml = "<div class=\"field row\">";
+        newHtml += "<label for\"test2\">" + name + "</label>";
+        newHtml += "<input id=\"test2\" type=\"text\" value=\"" + value + "\">";
+        newHtml += "</div>";
+
+        newcontent.innerHTML = newHtml;
+
+        while (newcontent.firstChild) {
+            existingVariablesElement.appendChild(newcontent.firstChild);
+        }
+      }
+
+      function addNumberSetting(name, value) {
+        console.log('addBooleanSetting ' + name + ', ' + value);
+        var existingVariablesElement = document.getElementById('existingVariables');
+        var newcontent = document.createElement('div');
+        newcontent.class = "field row";
+
+        var newHtml = "<div class=\"field row\">";
+        newHtml += "<label for\"test3\">" + name + "</label>";
+        newHtml += "<input id=\"test3\" type=\"number\" value=\"" + value + "\">";
+        newHtml += "</div>";
+
+        newcontent.innerHTML = newHtml;
+
+        while (newcontent.firstChild) {
+            existingVariablesElement.appendChild(newcontent.firstChild);
+        }
+      }
+
+    </script>
+  </body>
+</html>

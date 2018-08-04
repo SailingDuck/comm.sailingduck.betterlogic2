@@ -1,0 +1,9 @@
+{
+	"title": "Better Logic 2",
+	"settings":
+	{
+		"title": "Import",
+		"variables": "Variables",
+		"legendimport": "Paste export from Better Logic"
+	}
+}
